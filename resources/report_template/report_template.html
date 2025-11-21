@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>静态代码分析报告 - Yoki</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Microsoft YaHei', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      margin: 0;
+      padding: 15px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .header .logo {
+      max-width: 180px;
+      max-height: 180px;
+      width: auto;
+      height: auto;
+      margin: 0 auto 20px;
+      display: block;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+    }
+
+    .header h1 {
+      font-size: 2.8em;
+      font-weight: 300;
+      margin-bottom: 10px;
+      letter-spacing: -1px;
+    }
+
+    .header .subtitle {
+      font-size: 1.2em;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    .report-meta {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+      border-left: 4px solid #667eea;
+    }
+
+    .report-meta h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 1.4em;
+      font-weight: 600;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-label {
+      font-size: 0.9em;
+      color: #6c757d;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .meta-value {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .defects-section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .section-header {
+      background: #f8f9fa;
+      padding: 25px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .section-header h2 {
+      color: #2c3e50;
+      font-size: 1.4em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .sort-info {
+      margin-top: 5px;
+    }
+
+    .defects-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95em;
+    }
+
+    .defects-table thead {
+      background: #343a40;
+      color: white;
+    }
+
+    .defects-table th {
+      padding: 18px 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #495057;
+    }
+
+    .defects-table td {
+      padding: 15px;
+      border-bottom: 1px solid #e9ecef;
+      vertical-align: top;
+    }
+
+    .defects-table tbody tr {
+      transition: background-color 0.2s ease;
+    }
+
+    .defects-table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .defects-table tbody tr:nth-child(even) {
+      background-color: #fdfdfd;
+    }
+
+    .defects-table tbody tr:nth-child(even):hover {
+      background-color: #f1f3f4;
+    }
+
+    .defect-id {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      background: #e3f2fd;
+      color: #1565c0;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      font-weight: 600;
+      border: 1px solid #bbdefb;
+    }
+
+    .line-number {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      background: #fff3e0;
+      color: #e65100;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      font-weight: 600;
+      text-align: center;
+      min-width: 60px;
+      display: inline-block;
+      border: 1px solid #ffcc02;
+    }
+
+    .file-path {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      color: #495057;
+      font-size: 0.8em;
+      word-break: break-all;
+      word-wrap: break-word;
+      background: #f8f9fa;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #e9ecef;
+      white-space: pre-line;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      display: block;
+    }
+
+    .checker-name {
+      background: #e8f5e8;
+      color: #2e7d32;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      border: 1px solid #c8e6c9;
+      white-space: nowrap;
+    }
+
+    .defect-message {
+      line-height: 1.5;
+      color: #495057;
+      max-width: 400px;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    /* 排序功能样式 */
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: background-color 0.2s ease;
+    }
+
+    .sortable:hover {
+      background-color: #495057 !important;
+    }
+
+    .sort-indicator {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0.5;
+    }
+
+    .sort-arrow {
+      font-size: 0.6em;
+      line-height: 0.8;
+      color: #fff;
+      transition: opacity 0.2s ease;
+    }
+
+    .sortable.sort-asc .sort-indicator .sort-arrow:first-child,
+    .sortable.sort-desc .sort-indicator .sort-arrow:last-child {
+      opacity: 1;
+      color: #ffc107;
+      font-weight: bold;
+    }
+
+    .sortable:not(.sort-asc):not(.sort-desc) .sort-indicator {
+      opacity: 0.3;
+    }
+
+    .sortable:not(.sort-asc):not(.sort-desc):hover .sort-indicator {
+      opacity: 0.7;
+    }
+
+    .severity-high {
+      border-left: 4px solid #dc3545;
+    }
+
+    .severity-medium {
+      border-left: 4px solid #ffc107;
+    }
+
+    .severity-low {
+      border-left: 4px solid #28a745;
+    }
+
+    .no-defects {
+      text-align: center;
+      padding: 60px 20px;
+      color: #28a745;
+    }
+
+    .no-defects .icon {
+      font-size: 4em;
+      margin-bottom: 20px;
+    }
+
+    .no-defects h3 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .no-defects p {
+      font-size: 1.1em;
+      color: #6c757d;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      color: #6c757d;
+    }
+
+    .footer p {
+      margin-bottom: 10px;
+    }
+
+    .footer .version {
+      font-size: 0.9em;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 8px;
+      }
+
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .defects-table {
+        font-size: 0.85em;
+      }
+
+      .defects-table th,
+      .defects-table td {
+        padding: 8px 6px;
+      }
+
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .checker-name {
+        font-size: 0.75em;
+        padding: 4px 8px;
+      }
+
+      .defect-message {
+        max-width: none;
+      }
+
+      .file-path {
+        font-size: 0.75em;
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #6c757d;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- 页面标题 -->
+    <header class="header">
+      <img src="../yoki_logo.png" alt="Yoki Logo" class="logo">
+      <h1>静态代码分析报告</h1>
+      <p class="subtitle">Static Application Security Testing Report</p>
+    </header>
+
+    <!-- 报告元信息 -->
+    <section class="report-meta">
+      <h2>报告概览</h2>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">扫描时间</span>
+          <span class="meta-value" id="scan-time">{{SCAN_TIME}}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">缺陷总数</span>
+          <span class="meta-value" id="defect-count">{{DEFECT_COUNT}}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">扫描文件数</span>
+          <span class="meta-value" id="file-count">{{FILE_COUNT}}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">项目名称</span>
+          <span class="meta-value" id="project-path">{{PROJECT_NAME}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 缺陷详情 -->
+    <section class="defects-section">
+      <div class="section-header">
+        <h2>缺陷详情</h2>
+        <div class="sort-info">
+          <small style="color: #6c757d; font-size: 0.9em;">
+            💡 点击"缺陷ID"或"检查器"列标题可进行排序（升序/降序）
+          </small>
+        </div>
+      </div>
+
+      <!-- 缺陷表格 -->
+      <div id="defects-container">
+        <table class="defects-table" id="defects-table">
+          <thead>
+            <tr>
+              <th style="width: 100px" class="sortable" data-column="defectId">
+                缺陷ID
+                <span class="sort-indicator">
+                  <span class="sort-arrow">▲</span>
+                  <span class="sort-arrow">▼</span>
+                </span>
+              </th>
+              <th style="width: 140px" class="sortable" data-column="checkerName">
+                检查器
+                <span class="sort-indicator">
+                  <span class="sort-arrow">▲</span>
+                  <span class="sort-arrow">▼</span>
+                </span>
+              </th>
+              <th style="width: 35%">缺陷描述</th>
+              <th style="width: 35%">文件路径</th>
+              <th style="width: 70px">行号</th>
+            </tr>
+          </thead>
+          <tbody id="defects-tbody">
+            <!-- 缺陷数据将通过C++代码动态插入到这里 -->
+            {{DEFECT_ROWS}}
+          </tbody>
+        </table>
+
+        <!-- 无缺陷状态 -->
+        <div class="no-defects" id="no-defects" style="display: none;">
+          <div class="icon">✅</div>
+          <h3>恭喜！代码质量良好</h3>
+          <p>未发现任何安全漏洞或代码缺陷</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <p><strong>Yoki</strong> - 静态应用安全测试工具</p>
+      <p class="version">报告生成时间: <span id="generation-time">{{GENERATION_TIME}}</span></p>
+    </footer>
+  </div>
+
+  <script>
+    // HTML转义函数，防止XSS攻击
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+
+    // 添加单个缺陷行
+    function addDefectRow(defect) {
+      const tbody = document.getElementById('defects-tbody');
+      const row = document.createElement('tr');
+
+      // 根据缺陷类型添加不同的样式类
+      if (defect.severity) {
+        row.classList.add(`severity-${defect.severity.toLowerCase()}`);
+      }
+
+      row.innerHTML = `
+                <td>
+                    <span class="defect-id">${escapeHtml(defect.defectId)}</span>
+                </td>
+                <td>
+                    <span class="checker-name">${escapeHtml(defect.checkerName)}</span>
+                </td>
+                <td>
+                    <div class="defect-message">${escapeHtml(defect.defectMessage)}</div>
+                </td>
+                <td>
+                    <span class="file-path">${escapeHtml(defect.filePath)}</span>
+                </td>
+                <td>
+                    <span class="line-number">${defect.lineNumber || 'N/A'}</span>
+                </td>
+            `;
+
+      tbody.appendChild(row);
+    }
+
+    // 批量添加缺陷数据
+    function loadDefects(defects) {
+      const tbody = document.getElementById('defects-tbody');
+      const defectsTable = document.getElementById('defects-table');
+      const noDefectsDiv = document.getElementById('no-defects');
+
+      // 清空现有数据
+      tbody.innerHTML = '';
+
+      if (defects && defects.length > 0) {
+        defects.forEach(defect => addDefectRow(defect));
+        defectsTable.style.display = 'table';
+        noDefectsDiv.style.display = 'none';
+      } else {
+        defectsTable.style.display = 'none';
+        noDefectsDiv.style.display = 'block';
+      }
+
+      // 更新缺陷计数
+      updateDefectCount(defects ? defects.length : 0);
+    }
+
+    // 更新缺陷计数
+    function updateDefectCount(count) {
+      const countElement = document.getElementById('defect-count');
+      if (countElement) {
+        countElement.textContent = count;
+      }
+    }
+
+    // 更新扫描时间
+    function updateScanTime(time) {
+      const timeElement = document.getElementById('scan-time');
+      if (timeElement) {
+        timeElement.textContent = time;
+      }
+    }
+
+    // 更新文件计数
+    function updateFileCount(count) {
+      const countElement = document.getElementById('file-count');
+      if (countElement) {
+        countElement.textContent = count;
+      }
+    }
+
+    // 更新项目路径
+    function updateProjectPath(path) {
+      const pathElement = document.getElementById('project-path');
+      if (pathElement) {
+        pathElement.textContent = path;
+      }
+    }
+
+    // 全局变量存储当前缺陷数据和排序状态
+    let currentDefects = [];
+    let currentSortColumn = null;
+    let currentSortDirection = null; // 'asc' 或 'desc'
+
+    // 排序函数
+    function sortDefects(column, direction) {
+      const sortedDefects = [...currentDefects];
+
+      sortedDefects.sort((a, b) => {
+        let valueA = a[column];
+        let valueB = b[column];
+
+        // 转换为字符串进行比较
+        if (typeof valueA === 'string') {
+          valueA = valueA.toLowerCase();
+        }
+        if (typeof valueB === 'string') {
+          valueB = valueB.toLowerCase();
+        }
+
+        let comparison = 0;
+        if (valueA > valueB) {
+          comparison = 1;
+        } else if (valueA < valueB) {
+          comparison = -1;
+        }
+
+        return direction === 'desc' ? -comparison : comparison;
+      });
+
+      // 重新渲染表格
+      renderDefectsTable(sortedDefects);
+
+      // 更新排序状态
+      currentSortColumn = column;
+      currentSortDirection = direction;
+
+      // 更新UI状态
+      updateSortIndicators(column, direction);
+    }
+
+    // 渲染缺陷表格（不改变原始数据）
+    function renderDefectsTable(defects) {
+      const tbody = document.getElementById('defects-tbody');
+      tbody.innerHTML = '';
+
+      defects.forEach(defect => {
+        const row = document.createElement('tr');
+
+        // 根据缺陷类型添加不同的样式类
+        if (defect.severity) {
+          row.classList.add(`severity-${defect.severity.toLowerCase()}`);
+        }
+
+        row.innerHTML = `
+                <td>
+                    <span class="defect-id">${escapeHtml(defect.defectId)}</span>
+                </td>
+                <td>
+                    <span class="line-number">${defect.lineNumber || 'N/A'}</span>
+                </td>
+                <td>
+                    <span class="file-path">${escapeHtml(defect.filePath)}</span>
+                </td>
+                <td>
+                    <span class="checker-name">${escapeHtml(defect.checkerName)}</span>
+                </td>
+                <td>
+                    <div class="defect-message">${escapeHtml(defect.defectMessage)}</div>
+                </td>
+            `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    // 更新排序指示器
+    function updateSortIndicators(column, direction) {
+      // 重置所有排序指示器
+      document.querySelectorAll('.sortable').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+      });
+
+      // 设置当前排序列的指示器
+      const currentTh = document.querySelector(`[data-column="${column}"]`);
+      if (currentTh) {
+        currentTh.classList.add(`sort-${direction}`);
+      }
+    }
+
+    // 处理排序点击事件
+    function handleSortClick(column) {
+      let newDirection = 'asc';
+
+      if (currentSortColumn === column) {
+        // 如果点击的是当前排序列，则切换排序方向
+        if (currentSortDirection === 'asc') {
+          newDirection = 'desc';
+        } else if (currentSortDirection === 'desc') {
+          // 如果已经是降序，则重置为升序
+          newDirection = 'asc';
+        }
+      }
+
+      sortDefects(column, newDirection);
+    }
+
+    // 重写loadDefects函数以支持排序
+    function loadDefects(defects) {
+      const tbody = document.getElementById('defects-tbody');
+      const defectsTable = document.getElementById('defects-table');
+      const noDefectsDiv = document.getElementById('no-defects');
+
+      // 存储缺陷数据
+      currentDefects = defects || [];
+
+      // 清空现有数据
+      tbody.innerHTML = '';
+
+      if (currentDefects.length > 0) {
+        // 渲染表格
+        renderDefectsTable(currentDefects);
+        defectsTable.style.display = 'table';
+        noDefectsDiv.style.display = 'none';
+      } else {
+        defectsTable.style.display = 'none';
+        noDefectsDiv.style.display = 'block';
+      }
+
+      // 更新缺陷计数
+      updateDefectCount(currentDefects.length);
+    }
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function () {
+      // 设置默认生成时间
+      const generationTimeElement = document.getElementById('generation-time');
+      if (generationTimeElement && generationTimeElement.textContent === '{{GENERATION_TIME}}') {
+        generationTimeElement.textContent = new Date().toLocaleString('zh-CN');
+      }
+
+      // 添加排序事件监听器
+      document.querySelectorAll('.sortable').forEach(th => {
+        th.addEventListener('click', function () {
+          const column = this.getAttribute('data-column');
+          handleSortClick(column);
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

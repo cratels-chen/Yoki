@@ -1,0 +1,25 @@
+===== Function Declaration Information =====
+Function Name: f1
+Namespace: global
+Fully Qualified Name: f1
+Full Signature: void f1()
+Location: 1:1 in /Users/cratelschen/workspace/Yoki/test/no_goto/main.cpp =====
+
+// Raw AST Dump:
+FunctionDecl 0x15d8a21f8 </Users/cratelschen/workspace/Yoki/test/no_goto/main.cpp:1:1, line:8:1> line:1:6 used f1 'void ()'
+`-CompoundStmt 0x15d8a2520 <col:11, line:8:1>
+  |-LabelStmt 0x15d8a2438 <line:2:1, line:3:12> 'L1'
+  | `-DeclStmt 0x15d8a23c8 <col:3, col:12>
+  |   `-VarDecl 0x15d8a2328 <col:3, col:11> col:7 used a 'int' cinit
+  |     `-IntegerLiteral 0x15d8a2390 <col:11> 'int' 0
+  `-IfStmt 0x15d8a2500 <line:5:3, line:7:3>
+    |-BinaryOperator 0x15d8a24b0 <line:5:7, col:12> 'bool' '=='
+    | |-ImplicitCastExpr 0x15d8a2498 <col:7> 'int' <LValueToRValue>
+    | | `-DeclRefExpr 0x15d8a2458 <col:7> 'int' lvalue Var 0x15d8a2328 'a' 'int'
+    | `-IntegerLiteral 0x15d8a2478 <col:12> 'int' 0
+    `-CompoundStmt 0x15d8a24e8 <col:15, line:7:3>
+      `-GotoStmt 0x15d8a24d0 <line:6:5, col:10> 'L1' 0x15d8a23e8
+
+
+==========================================================
+

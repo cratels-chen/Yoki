@@ -1,0 +1,25 @@
+===== Function Declaration Information =====
+Function Name: f2
+Namespace: global
+Fully Qualified Name: f2
+Full Signature: void f2()
+Location: 10:1 in /Users/cratelschen/workspace/Yoki/test/no_goto/main.cpp =====
+
+// Raw AST Dump:
+FunctionDecl 0x15c821e08 </Users/cratelschen/workspace/Yoki/test/no_goto/main.cpp:10:1, line:17:1> line:10:6 used f2 'void ()'
+`-CompoundStmt 0x15c8220e0 <col:11, line:17:1>
+  |-LabelStmt 0x15c821ff8 <line:11:1, line:12:12> 'L2'
+  | `-DeclStmt 0x15c821f88 <col:3, col:12>
+  |   `-VarDecl 0x15c821ee8 <col:3, col:11> col:7 used a 'int' cinit
+  |     `-IntegerLiteral 0x15c821f50 <col:11> 'int' 0
+  `-IfStmt 0x15c8220c0 <line:14:3, line:16:3>
+    |-BinaryOperator 0x15c822070 <line:14:7, col:12> 'bool' '=='
+    | |-ImplicitCastExpr 0x15c822058 <col:7> 'int' <LValueToRValue>
+    | | `-DeclRefExpr 0x15c822018 <col:7> 'int' lvalue Var 0x15c821ee8 'a' 'int'
+    | `-IntegerLiteral 0x15c822038 <col:12> 'int' 0
+    `-CompoundStmt 0x15c8220a8 <col:15, line:16:3>
+      `-GotoStmt 0x15c822090 <line:15:5, col:10> 'L2' 0x15c821fa8
+
+
+==========================================================
+

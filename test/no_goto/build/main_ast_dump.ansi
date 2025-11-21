@@ -1,0 +1,33 @@
+===== Function Declaration Information =====
+Function Name: main
+Namespace: global
+Fully Qualified Name: main
+Full Signature: int main(int argc, const char ** argv)
+Location: 32:1 in /Users/cratelschen/workspace/Yoki/test/no_goto/main.cpp =====
+
+// Raw AST Dump:
+FunctionDecl 0x15c822b50 </Users/cratelschen/workspace/Yoki/test/no_goto/main.cpp:32:1, line:37:1> line:32:5 main 'int (int, const char **)'
+|-ParmVarDecl 0x15c822970 <col:10, col:14> col:14 argc 'int'
+|-ParmVarDecl 0x15c822a30 <col:20, col:33> col:33 argv 'const char **'
+`-CompoundStmt 0x15c823150 <col:39, line:37:1>
+  |-CallExpr 0x15c822d08 <line:33:3, col:6> 'void'
+  | `-ImplicitCastExpr 0x15c822cf0 <col:3> 'void (*)()' <FunctionToPointerDecay>
+  |   `-DeclRefExpr 0x15c822ca0 <col:3> 'void ()' lvalue Function 0x15d8a21f8 'f1' 'void ()'
+  |-CallExpr 0x15c822da8 <line:34:3, col:6> 'void'
+  | `-ImplicitCastExpr 0x15c822d90 <col:3> 'void (*)()' <FunctionToPointerDecay>
+  |   `-DeclRefExpr 0x15c822d70 <col:3> 'void ()' lvalue Function 0x15c821e08 'f2' 'void ()'
+  |-DeclStmt 0x15c823108 <line:35:3, col:26>
+  | `-VarDecl 0x15c822e20 <col:3, col:25> col:8 v 'int' cinit
+  |   `-CallExpr 0x15c822fa8 <col:12, col:25> 'int'
+  |     |-ImplicitCastExpr 0x15c822f90 <col:12, col:18> 'int (*)(int, int)' <FunctionToPointerDecay>
+  |     | `-DeclRefExpr 0x15c822ee8 <col:12, col:18> 'int (int, int)' lvalue Function 0x15c8223e0 'f3' 'int (int, int)'
+  |     |   `-NestedNameSpecifier Namespace 0x15c822198 'B'
+  |     |     `-NestedNameSpecifier Namespace 0x15c822108 'A'
+  |     |-IntegerLiteral 0x15c822f18 <col:21> 'int' 1
+  |     `-IntegerLiteral 0x15c822f38 <col:24> 'int' 3
+  `-ReturnStmt 0x15c823140 <line:36:3, col:10>
+    `-IntegerLiteral 0x15c823120 <col:10> 'int' 0
+
+
+==========================================================
+

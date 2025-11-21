@@ -1,0 +1,19 @@
+19:1 in /Users/cratelschen/workspace/Yoki/test/no_goto/main.cpp =====
+
+// Raw AST Dump:
+[0;1;32mFunctionDecl[0m[0;33m 0x136824d00[0m <[0;33m/Users/cratelschen/workspace/Yoki/test/no_goto/main.cpp:19:1[0m, [0;33mline:23:1[0m> [0;33mline:19:5[0m[0;1;36m main[0m [0;32m'int (int, const char **)'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x136824b20[0m <[0;33mcol:10[0m, [0;33mcol:14[0m> [0;33mcol:14[0m[0;1;36m argc[0m [0;32m'int'[0m
+[0;34m|-[0m[0;1;32mParmVarDecl[0m[0;33m 0x136824be0[0m <[0;33mcol:20[0m, [0;33mcol:33[0m> [0;33mcol:33[0m[0;1;36m argv[0m [0;32m'const char **'[0m
+[0;34m`-[0m[0;1;35mCompoundStmt[0m[0;33m 0x136824fa8[0m <[0;33mcol:39[0m, [0;33mline:23:1[0m>
+[0;34m  |-[0m[0;1;35mCallExpr[0m[0;33m 0x136824eb8[0m <[0;33mline:20:3[0m, [0;33mcol:6[0m> [0;32m'void'[0m[0;36m[0m[0;36m[0m
+[0;34m  | `-[0m[0;1;35mImplicitCastExpr[0m[0;33m 0x136824ea0[0m <[0;33mcol:3[0m> [0;32m'void (*)()'[0m[0;36m[0m[0;36m[0m <[0;31mFunctionToPointerDecay[0m>
+[0;34m  |   `-[0m[0;1;35mDeclRefExpr[0m[0;33m 0x136824e50[0m <[0;33mcol:3[0m> [0;32m'void ()'[0m[0;36m lvalue[0m[0;36m[0m [0;1;32mFunction[0m[0;33m 0x1368091f8[0m[0;1;36m 'f1'[0m [0;32m'void ()'[0m
+[0;34m  |-[0m[0;1;35mCallExpr[0m[0;33m 0x136824f58[0m <[0;33mline:21:3[0m, [0;33mcol:6[0m> [0;32m'void'[0m[0;36m[0m[0;36m[0m
+[0;34m  | `-[0m[0;1;35mImplicitCastExpr[0m[0;33m 0x136824f40[0m <[0;33mcol:3[0m> [0;32m'void (*)()'[0m[0;36m[0m[0;36m[0m <[0;31mFunctionToPointerDecay[0m>
+[0;34m  |   `-[0m[0;1;35mDeclRefExpr[0m[0;33m 0x136824f20[0m <[0;33mcol:3[0m> [0;32m'void ()'[0m[0;36m lvalue[0m[0;36m[0m [0;1;32mFunction[0m[0;33m 0x136824808[0m[0;1;36m 'f2'[0m [0;32m'void ()'[0m
+[0;34m  `-[0m[0;1;35mReturnStmt[0m[0;33m 0x136824f98[0m <[0;33mline:22:3[0m, [0;33mcol:10[0m>
+[0;34m    `-[0m[0;1;35mIntegerLiteral[0m[0;33m 0x136824f78[0m <[0;33mcol:10[0m> [0;32m'int'[0m[0;36m[0m[0;36m[0m[0;1;36m 0[0m
+
+
+==========================================================
+

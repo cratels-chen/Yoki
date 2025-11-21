@@ -1,0 +1,9 @@
+{
+  "program_name": "no_goto",
+  "program_path": "/Users/cratelschen/workspace/Yoki/test/no_goto",
+  "rules_enabled": [],
+  "exclude_paths": [
+    ".*/third_party/.*"
+  ],
+  "mode": "code_analysis"
+}
