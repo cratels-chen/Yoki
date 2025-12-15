@@ -12,14 +12,12 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include <string>
-#include <system_error>
 
 #include "CheckerManager.h"
 #include "DefectManager.h"
 #include "Handler.h"
 #include "YokiConfig.h"
 #include "compliance_public_header.h"
-#include "llvm/Support/raw_ostream.h"
 #include <string>
 
 using namespace clang;
@@ -45,6 +43,7 @@ int main(int argc, const char **argv) {
   int modified_argc = argc;
   const char **final_argv = argv;
 
+  // 设置程序空执行的时候显示帮助信息
   if (argc == 1) {
     modified_argv.push_back(argv[0]);  // 程序名
     modified_argv.push_back("--help"); // 添加--help参数
