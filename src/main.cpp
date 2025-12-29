@@ -17,7 +17,6 @@
 #include "DefectManager.h"
 #include "Handler.h"
 #include "YokiConfig.h"
-#include "compliance_public_header.h"
 #include <string>
 
 using namespace clang;

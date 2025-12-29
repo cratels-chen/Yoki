@@ -1,7 +1,10 @@
 #ifndef C2BDBA7D_F7A1_40EE_8204_DF629E3FB04E
 #define C2BDBA7D_F7A1_40EE_8204_DF629E3FB04E
 #include "Defect.h"
+#include <memory>
 #include <mutex>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 class DefectManager {
@@ -12,6 +15,13 @@ public:
   }
 
   void addDefect(const Defect &defect);
+
+  // For results that don't originate from a Yoki CheckerBase subclass instance
+  // (e.g. Clang Static Analyzer diagnostics). The returned reference stays
+  // valid for the lifetime of the process.
+  CheckerBase &getOrCreateExternalChecker(const std::string &checkerName,
+                                          const std::string &description,
+                                          CheckerSeverity severity);
 
   void dumpAsJson();
 
@@ -32,6 +42,9 @@ private:
   std::string getCurrentWorkingDirectory() const;
 
   std::vector<Defect> defects;
+
+  std::unordered_map<std::string, std::shared_ptr<CheckerBase>>
+      externalCheckers;
 
   std::mutex defectMutex;
 };

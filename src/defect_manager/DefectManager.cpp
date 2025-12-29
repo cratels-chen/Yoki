@@ -18,6 +18,23 @@ void DefectManager::addDefect(const Defect &defect) {
   defects.push_back(defect);
 }
 
+CheckerBase &
+DefectManager::getOrCreateExternalChecker(const std::string &checkerName,
+                                          const std::string &description,
+                                          CheckerSeverity severity) {
+  std::lock_guard<std::mutex> lock(defectMutex);
+
+  auto it = externalCheckers.find(checkerName);
+  if (it != externalCheckers.end() && it->second) {
+    return *it->second;
+  }
+
+  auto checker =
+      std::make_shared<CheckerBase>(checkerName, description, severity);
+  externalCheckers[checkerName] = checker;
+  return *checker;
+}
+
 void DefectManager::dumpAsJson() {}
 
 void DefectManager::dumpAsHtml() {

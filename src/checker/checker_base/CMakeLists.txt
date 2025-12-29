@@ -1,6 +1,6 @@
 project(checker_base)
 
-add_library(${PROJECT_NAME} CheckerBase.cpp)
+add_library(${PROJECT_NAME} CheckerBase.cpp CheckerRegistry.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 

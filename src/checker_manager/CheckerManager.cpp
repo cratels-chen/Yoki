@@ -1,17 +1,14 @@
 #include "CheckerManager.h"
+#include "../config/YokiConfig.h"
+#include "CheckerRegistry.h"
 #include "CheckerUtils.h"
 #include <memory>
 #include <spdlog/spdlog.h>
 
-#include "compliance_public_header.h"
-#include "../config/YokiConfig.h"
-
 void CheckerManager::initializeCheckers() {
-#define __REGISTER_CHECKER__(STANDARD_NAME, CLASS_NAME, CHECKER_NAME, DESC,    \
-                             SEVERITY)                                         \
-  supportCheckerVec.emplace_back(std::make_shared<CLASS_NAME>(                 \
-      CHECKER_NAME, DESC, CheckerSeverity::SEVERITY));
-#include "misra_cpp2023/misra_cpp2023.inc";
+  for (const auto &entry : CheckerRegistry::getInstance().getAll()) {
+    supportCheckerVec.emplace_back(entry.factory());
+  }
 }
 
 #define __YOKI_VISIT_NODE__(NODE)                                              \
@@ -52,6 +49,6 @@ void CheckerManager::setUpEnabledCheckers(
 
 void CheckerManager::setUpEnabledCheckers() {
   // 从YokiConfig单例获取规则
-  auto& config = YokiConfig::getInstance();
+  auto &config = YokiConfig::getInstance();
   setUpEnabledCheckers(config.getRulesVec());
 }

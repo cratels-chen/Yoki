@@ -11,4 +11,6 @@ target_link_libraries(
   PUBLIC
   spdlog::spdlog
   ast_frontend_action
+  defect_manager
+  checker_utils
 )

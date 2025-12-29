@@ -20,7 +20,7 @@ endif()
 set(CMAKE_C_COMPILER ${CLANG_COMPILER})
 set(CMAKE_CXX_COMPILER ${CLANGXX_COMPILER})
 
-# 设置默认构建类型为 Release，如果未指定的话
+# 设置默认构建类型为 Debug，如果未指定的话
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
 endif()

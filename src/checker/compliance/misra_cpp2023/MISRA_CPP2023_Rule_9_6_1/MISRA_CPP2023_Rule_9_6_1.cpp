@@ -1,9 +1,14 @@
 #include "MISRA_CPP2023_Rule_9_6_1.h"
+#include "CheckerRegistry.h"
 #include "Defect.h"
 #include "DefectManager.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/Basic/SourceManager.h"
 #include <string>
+
+YOKI_REGISTER_CHECKER(misra_cpp2023, MISRA_CPP2023_Rule_9_6_1,
+                      "MISRA_CPP2023:Rule 9.6.1",
+                      "A goto statement shall not be used.", ADVISORY);
 
 bool MISRA_CPP2023_Rule_9_6_1::VisitGotoStmt(GotoStmt *node,
                                              ASTContext *context) {
